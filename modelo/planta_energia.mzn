@@ -66,20 +66,17 @@ constraint forall(s in CLIENTES, i in DIAS)(
 
 % 5. Restricción de régimen alto (no más de max_dias_consecutivos_regimen días consecutivos en régimen alto)
 constraint forall(p in PLANTAS where max_dias_consecutivos_regimen[p] > 0)(
-    forall(i in 1..num_dias - max_dias_consecutivos_regimen[p] - 1)(
+    forall(i in 1..num_dias - max_dias_consecutivos_regimen[p])(
         sum(k in 0..max_dias_consecutivos_regimen[p])(
-            bool2int(sum(s in CLIENTES)(produccion[p,s,i+k]) >= umbral_regimen_alto[p])
+            if i+k <= num_dias then
+                bool2int(sum(s in CLIENTES)(produccion[p,s,i+k]) >= umbral_regimen_alto[p])
+            else
+                0
+            endif
         ) <= max_dias_consecutivos_regimen[p]
     )
 );
 
-constraint forall(p in PLANTAS where max_dias_consecutivos_regimen[p] > 0)(
-    forall(i in num_dias - max_dias_consecutivos_regimen[p]..num_dias)(
-        sum(k in 0..num_dias - i)(
-            bool2int(sum(s in CLIENTES)(produccion[p,s,i+k]) >= umbral_regimen_alto[p])
-        ) <= max_dias_consecutivos_regimen[p]
-    )
-);
 % ----------------------------
 % RESTRICCIONES ADICIONALES
 % ----------------------------
@@ -87,13 +84,6 @@ constraint forall(p in PLANTAS where max_dias_consecutivos_regimen[p] > 0)(
 % Redundante: producción total no debe exceder capacidad total
 constraint forall(p in PLANTAS)(
     sum(i in DIAS, s in CLIENTES)(produccion[p,s,i]) <= capacidades[p] * num_dias
-);
-
-% Ruptura de simetría: usar plantas más baratas primero
-constraint forall(p in PLANTAS where max_dias_consecutivos_regimen[p] > 0)(
-    forall(i in DIAS)(
-        sum(s in CLIENTES)(produccion[p,s,i]) <= capacidades[p] + 0.0001 
-    )
 );
 
 % ----------------------------
