@@ -1,8 +1,8 @@
 % Datos de ejemplo para el problema de plantas de energía
 
-num_plantas = 3;
-num_clientes = 2;
-num_dias = 2;
+numero_plantas = 3;
+numero_clientes = 2;
+numero_dias = 2;
 
 % Costos de producción por MW para cada planta
 costos = [20.0, 30.0, 40.0];  % Hidroeléctrica (más barata), Nuclear, Térmica

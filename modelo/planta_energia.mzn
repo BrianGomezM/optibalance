@@ -3,13 +3,13 @@ include "globals.mzn";
 % ----------------------------
 % PARÁMETROS DE ENTRADA (mejorado)
 % ----------------------------
-int: num_plantas;
-int: num_clientes;
-int: num_dias;
+int: numero_plantas;
+int: numero_clientes;
+int: numero_dias;
 
-set of int: PLANTAS = 1..num_plantas;
-set of int: CLIENTES = 1..num_clientes;
-set of int: DIAS = 1..num_dias;
+set of int: PLANTAS = 1..numero_plantas;
+set of int: CLIENTES = 1..numero_clientes;
+set of int: DIAS = 1..numero_dias;
 
 array[PLANTAS] of float: costos;
 array[PLANTAS] of float: capacidades;
@@ -66,9 +66,9 @@ constraint forall(s in CLIENTES, i in DIAS)(
 
 % 5. Restricción de régimen alto (no más de max_dias_consecutivos_regimen días consecutivos en régimen alto)
 constraint forall(p in PLANTAS where max_dias_consecutivos_regimen[p] > 0)(
-    forall(i in 1..num_dias - max_dias_consecutivos_regimen[p])(
+    forall(i in 1..numero_dias - max_dias_consecutivos_regimen[p])(
         sum(k in 0..max_dias_consecutivos_regimen[p])(
-            if i+k <= num_dias then
+            if i+k <= numero_dias then
                 bool2int(sum(s in CLIENTES)(produccion[p,s,i+k]) >= umbral_regimen_alto[p])
             else
                 0
@@ -83,7 +83,7 @@ constraint forall(p in PLANTAS where max_dias_consecutivos_regimen[p] > 0)(
 
 % Redundante: producción total no debe exceder capacidad total
 constraint forall(p in PLANTAS)(
-    sum(i in DIAS, s in CLIENTES)(produccion[p,s,i]) <= capacidades[p] * num_dias
+    sum(i in DIAS, s in CLIENTES)(produccion[p,s,i]) <= capacidades[p] * numero_dias
 );
 
 % ----------------------------

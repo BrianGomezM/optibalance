@@ -46,3 +46,9 @@ optibalance/
 ├── Imagenes/
 │   └── univalle.jpg         # Logo de la Universidad del Valle
 └── README.md                # Este archivo
+
+
+
+## Solver
+PS B:\Universidad\Restricciones\optibalance\modelo> minizinc --solver Gecode --time-limit 5000 .\planta_energia.mzn ..\pruebas\datos_prueba_2.dzn
+

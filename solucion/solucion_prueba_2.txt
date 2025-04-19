@@ -1,0 +1,21 @@
+Ganancia neta total: 31000.0
+Ingresos totales: 40200.0
+Costos totales: 9200.0
+
+Detalle por día:
+Día 1:
+  Producción total: 230.0 MW
+  Ingresos: 20000.0
+  Costos: 4600.0
+  Ganancia: 15400.0
+Día 2:
+  Producción total: 230.0 MW
+  Ingresos: 20200.0
+  Costos: 4600.0
+  Ganancia: 15600.0
+  Planta 1 día 1: 230.0 MW
+  Planta 1 día 2: 230.0 MW
+  Planta 2 día 1: 0.0 MW
+  Planta 2 día 2: 0.0 MW
+  Planta 3 día 1: 0.0 MW
+  Planta 3 día 2: 0.0 MW
