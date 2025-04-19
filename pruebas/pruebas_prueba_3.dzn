@@ -1,25 +1,12 @@
-% Datos de prueba para el problema de optimización de producción de energía
 numero_plantas = 3;
-numero_clientes = 2;
-numero_dias = 2;
-
-% Costos de producción por MW para cada planta
-costos = [30.0, 20.0, 40.0];  % Hidroeléctrica (más barata), Nuclear, Térmica
-
-% Capacidades máximas de producción diaria (MW)
-capacidades = [1000.0, 300.0, 500.0];
-
-% Porcentaje mínimo de demanda a satisfacer (50%)
+numero_clientes = 3;
+numero_dias = 3;
+costos = [25.0, 35.0, 45.0];
+capacidades = [300.0, 1000.0, 500.0];
 G = 50.0;
-
-% Demanda diaria de cada cliente (MW)
-demanda = [| 80.0, 90.0
-           |150.0, 140.0|];
-
-% Pago por MW que realiza cada cliente
-pagos = [100.0, 80.0];  % Pago por MW de cada cliente
-
-% Parámetros para régimen alto (80% de capacidad)
+demanda = [| 30.0, 40.0, 50.0
+           | 20.0, 25.0, 30.0
+           | 10.0, 15.0, 20.0|];
+pagos = [100.0, 110.0, 120.0];
 porcentaje_regimen_alto = [80.0, 80.0, 80.0];
-% Máximo de días consecutivos en régimen alto
-max_dias_consecutivos_regimen = [2, 2, 2]; % Hidroeléctrica solo 1 día consecutivo
+max_dias_consecutivos_regimen = [1, 3, 2];

@@ -1,0 +1,11 @@
+numero_plantas = 3;
+numero_clientes = 2;
+numero_dias = 2;
+costos = [-10.0, -20.0, -30.0];  
+capacidades = [10.0, 10.0, 10.0]; 
+G = 150;  
+demanda = [| 1000.0, 1000.0  
+           | 1000.0, 1000.0|];
+pagos = [-50.0, -30.0]; 
+porcentaje_regimen_alto = [200.0, 200.0, 200.0]; 
+max_dias_consecutivos_regimen = [0, 0, 0];  

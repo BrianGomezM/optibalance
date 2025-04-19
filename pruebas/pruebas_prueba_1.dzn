@@ -1,25 +1,11 @@
-% Datos de ejemplo para el problema de plantas de energía
-
 numero_plantas = 3;
 numero_clientes = 2;
 numero_dias = 3;
-
-% Costos de producción por MW para cada planta
-costos = [20.0, 10.0, 30.0];  % Nuclear, Hidroeléctrica, Térmica
-
-% Capacidades máximas de producción diaria (MW)
+costos = [20.0, 10.0, 30.0]; 
 capacidades = [1000.0, 300.0, 500.0];
-
-% Porcentaje mínimo de demanda a satisfacer (50%)
 G = 50;
-
-% Demanda diaria de cada cliente (MW)
 demanda = [| 80.0, 110.0,  90.0,
            |150.0,  98.0, 340.0|];
-
-% Pago por MW que realiza cada cliente
-pagos = [50.0, 40.0];  % Pago por MW de cada cliente
-
-% Parámetros para régimen alto
-porcentaje_regimen_alto = [90.0, 80.0, 80.0];  % Nuclear no tiene restricción
-max_dias_consecutivos_regimen = [2, 1, 2];     % Nuclear no tiene restricción
+pagos = [50.0, 40.0]; 
+porcentaje_regimen_alto = [90.0, 80.0, 80.0];  
+max_dias_consecutivos_regimen = [2, 1, 2];     

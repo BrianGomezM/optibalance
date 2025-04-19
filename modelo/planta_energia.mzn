@@ -66,39 +66,51 @@ constraint forall(s in CLIENTES, i in DIAS)(
 
 % 5. Restricción de régimen alto (no más de max_dias_consecutivos_regimen días consecutivos en régimen alto)
 constraint forall(p in PLANTAS where max_dias_consecutivos_regimen[p] > 0)(
-    forall(i in 1..numero_dias - max_dias_consecutivos_regimen[p])(
-        sum(k in 0..max_dias_consecutivos_regimen[p])(
-            if i+k <= numero_dias then
-                bool2int(sum(s in CLIENTES)(produccion[p,s,i+k]) >= umbral_regimen_alto[p])
-            else
-                0
-            endif
-        ) <= max_dias_consecutivos_regimen[p]
+    forall(i in 1..numero_dias-1)(
+        sum(k in 0..1)(
+            bool2int(sum(s in CLIENTES)(produccion[p,s,i+k]) >= umbral_regimen_alto[p])
+        ) <= 1 + bool2int(max_dias_consecutivos_regimen[p] > 1)
     )
 );
 
+constraint forall(p in PLANTAS, i in DIAS)(
+    sum(s in CLIENTES)(produccion[p,s,i]) <= 0.99 * capacidades[p]
+);
 % ----------------------------
 % RESTRICCIONES ADICIONALES
 % ----------------------------
 
 % Redundante: producción total no debe exceder capacidad total
 constraint forall(p in PLANTAS)(
-    sum(i in DIAS, s in CLIENTES)(produccion[p,s,i]) <= capacidades[p] * numero_dias
+    sum(i in DIAS, c in CLIENTES)(produccion[p,c,i]) <= capacidades[p] * numero_dias
 );
 
-% ----------------------------
-% ESTRATEGIA DE BÚSQUEDA
-% ----------------------------
-solve :: float_search(
-    [produccion[p,s,i] | p in PLANTAS, s in CLIENTES, i in DIAS],
-    0.001,               % Precisión
-    input_order,         % Orden de entrada
-    indomain_min,        % Valor mínimo
-    complete             % Búsqueda completa
-) maximize ganancia_neta;
+
+% Definir la prioridad dentro del modelo (ejemplo simple)
+array[CLIENTES] of float: prioridad_cliente = [pagos[c] / sum(k in CLIENTES)(pagos[k]) | c in CLIENTES];
+
+% Ordenar los clientes en función de la prioridad (de mayor a menor)
+array[1..numero_clientes] of var CLIENTES: CLIENTES_ORDENADOS;
+constraint forall(i in 1..numero_clientes-1)(
+    prioridad_cliente[CLIENTES_ORDENADOS[i]] >= prioridad_cliente[CLIENTES_ORDENADOS[i+1]]
+);
+
+% Estrategia de búsqueda #6
+solve :: seq_search([
+    float_search(
+        [produccion[p,s,i] | p in PLANTAS where max_dias_consecutivos_regimen[p] > 0, s in CLIENTES, i in DIAS],
+        0.01, most_constrained, indomain_max, complete
+    ),
+    float_search(
+        [produccion[p,s,i] | p in PLANTAS where max_dias_consecutivos_regimen[p] = 0, s in CLIENTES, i in DIAS],
+        0.01, input_order, indomain_min, complete
+    )
+]) maximize ganancia_neta;
+
+
 
 % ----------------------------
-% OUTPUT (mejorado)
+% OUTPUT 
 % ----------------------------
 output [
   "Ganancia neta total: ", show(round(ganancia_neta * 100) / 100), "\n",
@@ -112,7 +124,7 @@ output [
   "  Producción total: ", show(round(sum(p in PLANTAS, s in CLIENTES)(produccion[p,s,i]) * 100) / 100), " MW\n",
   "  Ingresos: ", show(round(sum(p in PLANTAS, s in CLIENTES)(produccion[p,s,i] * pagos[s]) * 100) / 100), "\n",
   "  Costos: ", show(round(sum(p in PLANTAS, s in CLIENTES)(produccion[p,s,i] * costos[p]) * 100) / 100), "\n",
-  "  Ganancia: ", show(round(sum(p in PLANTAS, s in CLIENTES)(produccion[p,s,i] * (pagos[s] - costos[p])) * 100) / 100), "\n"
+  "  Ganancia: ", show(round(sum(p in PLANTAS, s in CLIENTES)(produccion[p,s,i] * (pagos[s] - costos[p])) * 100) / 100), "\n\n"
   ]) | i in DIAS ] ++
 [ concat([
   "  Planta ", show(p), " día ", show(i), ": ", 

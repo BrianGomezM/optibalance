@@ -1,0 +1,9 @@
+
+Running planta_energia.mzn, pruebas_prueba_11_Error.dzn
+340msec
+
+=====UNSATISFIABLE=====
+Finished in 340msec.
+
+% Razón:
+%La capacidad total (200 MW) no alcanza para el mínimo requerido (250 MW).

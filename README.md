@@ -9,11 +9,7 @@
 
 ## 📄 Información General
 
-**OptiBalance** es un modelo de optimización basado en programación por restricciones (CSP), desarrollado en MiniZinc. Este taller tiene como objetivo formular, modelar e implementar un problema de asignación balanceada, en donde se busca distribuir equitativamente actividades o cargas de trabajo entre diferentes entidades.
-
-El desarrollo incluye tanto el modelado matemático como su implementación computacional, además de pruebas experimentales y análisis de resultados.
-
----
+**OptiBalance** Modelo de optimización basado en programación por restricciones (CSP). Este taller tiene como objetivo formular, modelar e implementar un problema de asignación balanceada, en donde se busca distribuir equitativamente actividades o cargas de trabajo entre diferentes entidades.
 
 ## 👨‍💻 Autores
 
@@ -25,30 +21,47 @@ El desarrollo incluye tanto el modelado matemático como su implementación comp
 **Escuela:** Ingeniería de Sistemas y Computación  
 **Universidad del Valle**
 
----
 
 ## 📁 Estructura del Proyecto
-
-```plaintext
 optibalance/
-├── models/
-│   ├── model.mzn            # Modelo principal en MiniZinc
-│   └── data.dzn             # Archivo base con datos de ejemplo
-├── solutions/
-│   └── solution.txt         # Resultados de ejecución guardados
-├── tests/
-│   ├── test1.dzn            # Casos de prueba adicionales
-│   ├── test2.dzn
-│   └── ...
-├── reports/
-│   ├── informe_optibalance.pdf   # Informe en PDF con portada y desarrollo
-│   └── portada.tex               # (Opcional) Portada en LaTeX
-├── Imagenes/
-│   └── univalle.jpg         # Logo de la Universidad del Valle
-└── README.md                # Este archivo
-
+├───estrategias_busqueda/
+│   └── estrategiasBusqueda.txt
+├───informe/
+│   └── InformeTaller2.pdf
+├───modelo/
+│   └── planta_energia.mzn
+├───pruebas/
+│   ├── pruebas_prueba_1.dzn
+│   ├── pruebas_prueba_2.dzn
+│   ├── pruebas_prueba_3.dzn
+│   ├── pruebas_prueba_4.dzn
+│   ├── pruebas_prueba_5.dzn
+│   ├── pruebas_prueba_6.dzn
+│   ├── pruebas_prueba_7.dzn
+│   ├── pruebas_prueba_8.dzn
+│   ├── pruebas_prueba_9_Error.dzn
+│   ├── pruebas_prueba_10_Error.dzn
+│   └── pruebas_prueba_11_Error.dzn
+├───solucion/
+│   ├── solucion_prueba_1.txt
+│   ├── solucion_prueba_2.txt
+│   ├── solucion_prueba_3.txt
+│   ├── solucion_prueba_4.txt
+│   ├── solucion_prueba_5.txt
+│   ├── solucion_prueba_6.txt
+│   ├── solucion_prueba_7.txt
+│   ├── solucion_prueba_8.txt
+│   ├── solucion_prueba_9.txt
+│   ├── solucion_prueba_10.txt
+│   └── solucion_prueba_11.txt
+├───taller/
+│   └── Taller 2.pdf
+└───README.md
 
 
 ## Solver
-PS B:\Universidad\Restricciones\optibalance\modelo> minizinc --solver Gecode --time-limit 5000 .\planta_energia.mzn ..\pruebas\datos_prueba_2.dzn
+minizinc --solver gecode --time-limit 5000 --statistics .\planta_energia.mzn ..\pruebas\pruebas_prueba_1.dzn
+minizinc --solver coin-bc --time-limit 60000 --statistics .\planta_energia.mzn ..\pruebas\pruebas_prueba_1.dzn
+minizinc --solver highs --time-limit 60000 --statistics .\planta_energia.mzn ..\pruebas\pruebas_prueba_1.dzn
+minizinc --solver scip --time-limit 5000 --statistics .\planta_energia.mzn ..\pruebas\pruebas_prueba_1.dzn
 

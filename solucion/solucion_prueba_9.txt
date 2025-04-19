@@ -1,0 +1,9 @@
+
+Running planta_energia.mzn, pruebas_prueba_9_Error.dzn
+338msec
+
+=====UNKNOWN=====
+Finished in 338msec.
+
+%Razón:
+%La capacidad total diaria es 1800 MW (1000+300+500), pero el mínimo agregado es 2000 MW/día (50% de 4000 MW).

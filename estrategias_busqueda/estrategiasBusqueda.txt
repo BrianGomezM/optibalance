@@ -1,0 +1,116 @@
+% ESTRATEGIA DE BÚSQUEDA # 1
+% ----------------------------
+solve :: float_search(
+    [produccion[p,s,i] | p in PLANTAS, s in CLIENTES, i in DIAS],
+    0.001,               % Precisión
+    input_order,         % Orden de entrada
+    indomain_min,        % Valor mínimo
+    complete             % Búsqueda completa
+) maximize ganancia_neta;
+% ----------------------------
+% ESTRATEGIA DE BÚSQUEDA # 2
+% ----------------------------
+solve :: float_search(
+    [produccion[p,s,i] | p in PLANTAS, s in CLIENTES, i in DIAS],
+    0.001,               % Prec: float (ej: 0.001)
+    occurrence,          % Selección: ann
+    indomain_split,      % Elección: ann
+    complete             % Esquema: ann
+) maximize ganancia_neta;
+% ----------------------------
+% ESTRATEGIA DE BÚSQUEDA # 3
+% ----------------------------
+solve :: seq_search([
+    float_search(
+        [produccion[p,s,i] | p in PLANTAS, s in CLIENTES, i in DIAS 
+        where (pagos[s] - costos[p]) = max([pagos[cs] - costos[cp] | cs in CLIENTES, cp in PLANTAS])],
+        0.001,       % ¡Parámetro de precisión añadido! (requerido)
+        occurrence, 
+        indomain_median, 
+        complete
+    ),
+    float_search(
+        [produccion[p,s,i] | p in PLANTAS, s in CLIENTES, i in DIAS],
+        0.001,       % Precisión
+        input_order, 
+        indomain_min, 
+        complete
+    )
+]) maximize ganancia_neta;
+% ----------------------------
+% ESTRATEGIA DE BÚSQUEDA # 4
+% ----------------------------
+solve :: int_search(
+    [round(produccion[p,s,i]) | p in PLANTAS, s in CLIENTES, i in DIAS],
+    dom_w_deg,          % Ordena por variables con dominio pequeño y alta participación en restricciones
+    indomain_random,     % Asignación aleatoria dentro del dominio
+    complete
+) maximize ganancia_neta;
+% ----------------------------
+% ESTRATEGIA DE BÚSQUEDA # 5
+% ----------------------------
+solve :: seq_search([
+    float_search(
+        [produccion[p,s,1] | p in PLANTAS, s in CLIENTES],  % ¡Lista explícita de variables!
+        0.001, 
+        occurrence, 
+        indomain_min, 
+        complete
+    ),
+    float_search(
+        [produccion[p,s,i] | p in PLANTAS, s in CLIENTES, i in 2..numero_dias],
+        0.001,
+        input_order,
+        indomain_split,
+        complete
+    )
+]) maximize ganancia_neta;
+% ----------------------------
+% ESTRATEGIA DE BÚSQUEDA # 6
+% ----------------------------
+solve :: seq_search([
+    float_search(
+        [produccion[p,s,i] | p in PLANTAS where max_dias_consecutivos_regimen[p] > 0, s in CLIENTES, i in DIAS],
+        0.01, most_constrained, indomain_max, complete
+    ),
+    float_search(
+        [produccion[p,s,i] | p in PLANTAS where max_dias_consecutivos_regimen[p] = 0, s in CLIENTES, i in DIAS],
+        0.01, input_order, indomain_min, complete
+    )
+]) maximize ganancia_neta;
+
+% ----------------------------
+% ESTRATEGIA DE BÚSQUEDA # 7
+% ----------------------------
+solve :: restart_luby(5)  
+       :: float_search(
+            [produccion[p,s,i] | p in PLANTAS, s in CLIENTES, i in DIAS],
+            0.01,
+            anti_first_fail,
+            indomain_split,
+            complete
+       )
+maximize ganancia_neta;
+% ----------------------------
+% ESTRATEGIA DE BÚSQUEDA # 8
+% ----------------------------
+
+%%Estrategia de busqueda dandole prioridad a los clientes
+
+array[CLIENTES] of float: prioridad_cliente = [pagos[s] / sum(s in CLIENTES)(pagos[s]) | s in CLIENTES];
+
+
+array[1..numero_clientes] of var CLIENTES: CLIENTES_ORDENADOS;
+constraint forall(i in 1..numero_clientes-1)(
+    prioridad_cliente[CLIENTES_ORDENADOS[i]] >= prioridad_cliente[CLIENTES_ORDENADOS[i+1]]
+);
+
+% Estrategia de búsqueda
+solve :: float_search(
+    [produccion[p, CLIENTES_ORDENADOS[s_idx], i] 
+     | s_idx in 1..numero_clientes, p in PLANTAS, i in DIAS],
+    0.001,
+    input_order,
+    indomain_min,
+    complete
+) maximize ganancia_neta;

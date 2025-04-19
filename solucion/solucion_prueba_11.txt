@@ -1,0 +1,20 @@
+
+Running planta_energia.mzn, pruebas_prueba_12_Error.dzn
+325msec
+
+planta_energia:51.12-71
+  in call 'assert'
+MiniZinc: assertion failed: G debe estar entre 0 y 100
+Process finished with non-zero exit code 1.
+Finished in 325msec.
+
+
+
+% 1. Costos negativos (inválidos)
+% 2. Capacidades insuficientes para el mínimo requerido
+% 3. Porcentaje mínimo inválido
+% 4. Demanda que supera ampliamente la capacidad
+% 5. Pagos negativos (inválidos)
+% 6. Régimen alto imposible
+% 7. Nota: ¡Todas las plantas estarían forzadas a operar en régimen alto siempre!
+%    (porque porcentaje_regimen_alto > 100% y max_dias_consecutivos = 0)
