@@ -16,11 +16,11 @@ array[PLANTAS] of float: capacidades;
 array[PLANTAS] of float: porcentaje_regimen_alto;
 array[PLANTAS] of float: umbral_regimen_alto = [capacidades[p] * porcentaje_regimen_alto[p] / 100.0 | p in PLANTAS];
 array[PLANTAS] of int: max_dias_consecutivos_regimen;
-
-float: G; % porcentaje mínimo de demanda a satisfacer (ej: 50.0)
-
 array[CLIENTES, DIAS] of float: demanda;
 array[CLIENTES] of float: pagos;
+
+float: G; 
+float: max_capacidad = max(capacidades);
 
 % ----------------------------
 % VARIABLES DE DECISIÓN
@@ -66,15 +66,15 @@ constraint forall(s in CLIENTES, i in DIAS)(
 
 % 5. Restricción de régimen alto (no más de max_dias_consecutivos_regimen días consecutivos en régimen alto)
 constraint forall(p in PLANTAS where max_dias_consecutivos_regimen[p] > 0)(
-    forall(i in 1..numero_dias-1)(
-        sum(k in 0..1)(
+    forall(i in 1..numero_dias - max_dias_consecutivos_regimen[p])(
+        sum(k in 0..max_dias_consecutivos_regimen[p] - 1)(
             bool2int(sum(s in CLIENTES)(produccion[p,s,i+k]) >= umbral_regimen_alto[p])
-        ) <= 1 + bool2int(max_dias_consecutivos_regimen[p] > 1)
+        ) <= max_dias_consecutivos_regimen[p] - 1
     )
 );
 
-constraint forall(p in PLANTAS, i in DIAS)(
-    sum(s in CLIENTES)(produccion[p,s,i]) <= 0.99 * capacidades[p]
+constraint forall(p in PLANTAS)(
+    sum(i in DIAS, c in CLIENTES)(produccion[p,c,i]) <= capacidades[p] * numero_dias
 );
 % ----------------------------
 % RESTRICCIONES ADICIONALES

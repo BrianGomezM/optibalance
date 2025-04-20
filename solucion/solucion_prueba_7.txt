@@ -1,57 +1,57 @@
-Ganancia neta total: 554995.0
+Ganancia neta total: 555240.0
 Ingresos totales: 741300.0
-Costos totales: 186305.0
+Costos totales: 186060.0
 
 Detalle por día:
 Día 1:
   Producción total: 700.0 MW
   Ingresos: 79500.0
-  Costos: 18935.0
-  Ganancia: 60565.0
+  Costos: 18900.0
+  Ganancia: 60600.0
 Día 2:
   Producción total: 780.0 MW
   Ingresos: 88300.0
-  Costos: 21495.0
-  Ganancia: 66805.0
+  Costos: 21460.0
+  Ganancia: 66840.0
 Día 3:
   Producción total: 860.0 MW
   Ingresos: 97100.0
-  Costos: 24055.0
-  Ganancia: 73045.0
+  Costos: 24020.0
+  Ganancia: 73080.0
 Día 4:
   Producción total: 940.0 MW
   Ingresos: 105900.0
-  Costos: 26615.0
-  Ganancia: 79285.0
+  Costos: 26580.0
+  Ganancia: 79320.0
 Día 5:
   Producción total: 1020.0 MW
   Ingresos: 114700.0
-  Costos: 29175.0
-  Ganancia: 85525.0
+  Costos: 29140.0
+  Ganancia: 85560.0
 Día 6:
   Producción total: 1100.0 MW
   Ingresos: 123500.0
-  Costos: 31735.0
-  Ganancia: 91765.0
+  Costos: 31700.0
+  Ganancia: 91800.0
 Día 7:
   Producción total: 1180.0 MW
   Ingresos: 132300.0
-  Costos: 34295.0
-  Ganancia: 98005.0
-  Planta 1 día 1: 346.5 MW
-  Planta 1 día 2: 346.5 MW
-  Planta 1 día 3: 346.5 MW
-  Planta 1 día 4: 346.5 MW
-  Planta 1 día 5: 346.5 MW
-  Planta 1 día 6: 346.5 MW
-  Planta 1 día 7: 346.5 MW
-  Planta 2 día 1: 353.5 MW
-  Planta 2 día 2: 433.5 MW
-  Planta 2 día 3: 513.5 MW
-  Planta 2 día 4: 593.5 MW
-  Planta 2 día 5: 673.5 MW
-  Planta 2 día 6: 753.5 MW
-  Planta 2 día 7: 833.5 MW
+  Costos: 34260.0
+  Ganancia: 98040.0
+  Planta 1 día 1: 350.0 MW
+  Planta 1 día 2: 350.0 MW
+  Planta 1 día 3: 350.0 MW
+  Planta 1 día 4: 350.0 MW
+  Planta 1 día 5: 350.0 MW
+  Planta 1 día 6: 350.0 MW
+  Planta 1 día 7: 350.0 MW
+  Planta 2 día 1: 350.0 MW
+  Planta 2 día 2: 430.0 MW
+  Planta 2 día 3: 510.0 MW
+  Planta 2 día 4: 590.0 MW
+  Planta 2 día 5: 670.0 MW
+  Planta 2 día 6: 750.0 MW
+  Planta 2 día 7: 830.0 MW
   Planta 3 día 1: 0.0 MW
   Planta 3 día 2: 0.0 MW
   Planta 3 día 3: 0.0 MW
@@ -66,3 +66,10 @@ Día 7:
   Planta 4 día 5: 0.0 MW
   Planta 4 día 6: 0.0 MW
   Planta 4 día 7: 0.0 MW
+  Planta 1 día 1 operó en RÉGIMEN ALTO
+  Planta 1 día 2 operó en RÉGIMEN ALTO
+  Planta 1 día 3 operó en RÉGIMEN ALTO
+  Planta 1 día 4 operó en RÉGIMEN ALTO
+  Planta 1 día 5 operó en RÉGIMEN ALTO
+  Planta 1 día 6 operó en RÉGIMEN ALTO
+  Planta 1 día 7 operó en RÉGIMEN ALTO
