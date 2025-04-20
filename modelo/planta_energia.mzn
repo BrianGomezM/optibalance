@@ -1,50 +1,47 @@
 include "globals.mzn";
 
 % ----------------------------
-% DATOS DEL PROBLEMA
+% PARÁMETROS DE ENTRADA (mejorado)
 % ----------------------------
-int: numero_plantas;       % Total de plantas generadoras
-int: numero_clientes;      % Total de clientes a atender
-int: numero_dias;          % Días del periodo a planificar
+int: numero_plantas;
+int: numero_clientes;
+int: numero_dias;
 
 set of int: PLANTAS = 1..numero_plantas;
 set of int: CLIENTES = 1..numero_clientes;
 set of int: DIAS = 1..numero_dias;
 
-% Costos y capacidades de cada planta
-array[PLANTAS] of float: costos;                 % Costo por MW en cada planta
-array[PLANTAS] of float: capacidades;            % Máxima producción diaria por planta
-array[PLANTAS] of float: porcentaje_regimen_alto; % % de capacidad que define régimen alto
+array[PLANTAS] of float: costos;
+array[PLANTAS] of float: capacidades;
+array[PLANTAS] of float: porcentaje_regimen_alto;
 array[PLANTAS] of float: umbral_regimen_alto = [capacidades[p] * porcentaje_regimen_alto[p] / 100.0 | p in PLANTAS];
-array[PLANTAS] of int: max_dias_consecutivos_regimen; % Límite de días en régimen alto
+array[PLANTAS] of int: max_dias_consecutivos_regimen;
 
 float: G; % porcentaje mínimo de demanda a satisfacer (ej: 50.0)
 
-% Demanda de cada cliente por día y lo que pagan por MW
 array[CLIENTES, DIAS] of float: demanda;
 array[CLIENTES] of float: pagos;
 
 % ----------------------------
 % VARIABLES DE DECISIÓN
 % ----------------------------
-% Cuánto produce cada planta para cada cliente cada día
 array[PLANTAS, CLIENTES, DIAS] of var 0.0..10000.0: produccion;
 
 % ----------------------------
-% FUNCIÓN OBJETIVO: Maximizar ganancia
+% FUNCIÓN OBJETIVO
 % ----------------------------
 var float: ingresos = sum(p in PLANTAS, s in CLIENTES, i in DIAS)(
-    produccion[p,s,i] * pagos[s] % Dinero que recibimos
+    produccion[p,s,i] * pagos[s]
 );
 
 var float: costos_totales = sum(p in PLANTAS, s in CLIENTES, i in DIAS)(
-    produccion[p,s,i] * costos[p] % Dinero que gastamos
+    produccion[p,s,i] * costos[p]
 );
 
-var float: ganancia_neta = ingresos - costos_totales; % Lo que queremos maximizar
+var float: ganancia_neta = ingresos - costos_totales;
 
 % ----------------------------
-% RESTRICCIONES DEL PROBLEMA
+% RESTRICCIONES (mejoradas)
 % ----------------------------
 
 % 1. Validación de parámetros
@@ -52,12 +49,12 @@ constraint assert(G >= 0.0 /\ G <= 100.0, "G debe estar entre 0 y 100");
 constraint forall(p in PLANTAS)(capacidades[p] >= 0.0);
 constraint forall(p in PLANTAS)(porcentaje_regimen_alto[p] >= 0.0 /\ porcentaje_regimen_alto[p] <= 100.0);
 
-% 2. No superar capacidad máxima de cada planta
+% 2. Capacidad máxima de producción por planta por día
 constraint forall(p in PLANTAS, i in DIAS)(
     sum(s in CLIENTES)(produccion[p,s,i]) <= capacidades[p]
 );
 
-% 3. Cubrir al menos G% de la demanda de cada cliente
+% 3. Mínimo garantizado de demanda por cliente por día
 constraint forall(s in CLIENTES, i in DIAS)(
     sum(p in PLANTAS)(produccion[p,s,i]) >= (G / 100.0) * demanda[s,i]
 );
@@ -67,7 +64,7 @@ constraint forall(s in CLIENTES, i in DIAS)(
     sum(p in PLANTAS)(produccion[p,s,i]) <= demanda[s,i]
 );
 
-% 5. Controlar días consecutivos en régimen alto
+% 5. Restricción de régimen alto (no más de max_dias_consecutivos_regimen días consecutivos en régimen alto)
 constraint forall(p in PLANTAS where max_dias_consecutivos_regimen[p] > 0)(
     forall(i in 1..numero_dias-1)(
         sum(k in 0..1)(
@@ -79,35 +76,26 @@ constraint forall(p in PLANTAS where max_dias_consecutivos_regimen[p] > 0)(
 constraint forall(p in PLANTAS, i in DIAS)(
     sum(s in CLIENTES)(produccion[p,s,i]) <= 0.99 * capacidades[p]
 );
+% ----------------------------
+% RESTRICCIONES ADICIONALES
+% ----------------------------
 
-% -----------------------------------------------------------
-% RESTRICCIONES EXTRA (REDUNDANTES Y ROMPIMIENTO DE SIMETRÍA)
-% -----------------------------------------------------------
-
-% Para evitar que una planta produzca más de lo posible en todo el periodo
-% (Es redundante pero ayuda al solver)
+% Redundante: producción total no debe exceder capacidad total
 constraint forall(p in PLANTAS)(
     sum(i in DIAS, c in CLIENTES)(produccion[p,c,i]) <= capacidades[p] * numero_dias
 );
 
 
-% Calculamos prioridad según lo que paga cada cliente
-% (Clientes que pagan más tienen mayor prioridad)
+% Definir la prioridad dentro del modelo (ejemplo simple)
 array[CLIENTES] of float: prioridad_cliente = [pagos[c] / sum(k in CLIENTES)(pagos[k]) | c in CLIENTES];
 
-% Variable para ordenar clientes (de mayor a menor prioridad)
+% Ordenar los clientes en función de la prioridad (de mayor a menor)
 array[1..numero_clientes] of var CLIENTES: CLIENTES_ORDENADOS;
-
-% Restricción para mantener el orden correcto
 constraint forall(i in 1..numero_clientes-1)(
     prioridad_cliente[CLIENTES_ORDENADOS[i]] >= prioridad_cliente[CLIENTES_ORDENADOS[i+1]]
 );
 
-
-% ----------------------------
-% ESTRATEGIA DE BÚSQUEDA
-% ----------------------------
-% Primero asignar las plantas con restricciones de régimen alto
+% Estrategia de búsqueda #6
 solve :: seq_search([
     float_search(
         [produccion[p,s,i] | p in PLANTAS where max_dias_consecutivos_regimen[p] > 0, s in CLIENTES, i in DIAS],
@@ -118,6 +106,7 @@ solve :: seq_search([
         0.01, input_order, indomain_min, complete
     )
 ]) maximize ganancia_neta;
+
 
 
 % ----------------------------
@@ -131,17 +120,17 @@ output [
   "Detalle por día:\n"
 ] ++
 [ concat([
-  "Dia ", show(i), ":\n",
-  "  Produccion total: ", show(round(sum(p in PLANTAS, s in CLIENTES)(produccion[p,s,i]) * 100) / 100), " MW\n",
+  "Día ", show(i), ":\n",
+  "  Producción total: ", show(round(sum(p in PLANTAS, s in CLIENTES)(produccion[p,s,i]) * 100) / 100), " MW\n",
   "  Ingresos: ", show(round(sum(p in PLANTAS, s in CLIENTES)(produccion[p,s,i] * pagos[s]) * 100) / 100), "\n",
   "  Costos: ", show(round(sum(p in PLANTAS, s in CLIENTES)(produccion[p,s,i] * costos[p]) * 100) / 100), "\n",
-  "  Ganancia: ", show(round(sum(p in PLANTAS, s in CLIENTES)(produccion[p,s,i] * (pagos[s] - costos[p])) * 100) / 100), "\n\n"
+  "  Ganancia: ", show(round(sum(p in PLANTAS, s in CLIENTES)(produccion[p,s,i] * (pagos[s] - costos[p])) * 100) / 100), "\n"
   ]) | i in DIAS ] ++
 [ concat([
-  "  Planta ", show(p), " dia ", show(i), ": ", 
+  "  Planta ", show(p), " día ", show(i), ": ", 
   show(round(sum(s in CLIENTES)(produccion[p,s,i]) * 100) / 100), " MW\n"
   ]) | p in PLANTAS, i in DIAS ] ++
 [ if fix(sum(s in CLIENTES)(produccion[p,s,i])) >= umbral_regimen_alto[p] then 
-     concat(["  Planta ", show(p), " día ", show(i), " opero en REGIMEN ALTO\n"])
+     concat(["  Planta ", show(p), " día ", show(i), " operó en RÉGIMEN ALTO\n"])
   else "" endif 
   | p in PLANTAS, i in DIAS ];

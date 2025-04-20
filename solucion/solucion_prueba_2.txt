@@ -17,3 +17,4 @@ Día 2:
   Planta 1 día 2: 140.0 MW
   Planta 2 día 1: 0.0 MW
   Planta 2 día 2: 0.0 MW
+----------
